@@ -4,12 +4,17 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-autopep8 = "*"
-pdoc = "*"
+jupyter = "*"
+pandas = "*"
+matplotlib = "*"
+scikit-learn = "*"
+numpy = "*"
+torch = "*"
+imbalanced-learn = "*"
 
 [dev-packages]
 autopep8 = "*"
 pdoc = "*"
 
 [requires]
-python_version = "3.10"
+python_version = "3.9"
