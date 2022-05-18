@@ -1,7 +1,7 @@
 from __future__ import division
 from __future__ import print_function
 
-__version__ = '0.1.0'
+__version__ = '1.0.0-alpha.1'
 __author__ = 'Martino Pulici'
 
 
@@ -20,6 +20,7 @@ from aml.load_data import load_data
 from aml.models import GAT, GAT_MLP, MLP, SLP
 from aml.utils import best_f1, evaluate
 
+
 def test():
     model.eval()
     output = model(features, adj)
@@ -35,8 +36,13 @@ def test():
           'f1-score = {:.3f},'.format(f1_test),
           'best f1 = {:.3f}'.format(best_f1_test))
 
+
 parser = argparse.ArgumentParser()
-parser.add_argument('--folder', type=str, default='checkpoints', help='.pkl files folder.')
+parser.add_argument(
+    '--folder',
+    type=str,
+    default='checkpoints',
+    help='.pkl files folder.')
 parser.add_argument('--seed', type=int, default=28, help='Random seed.')
 args = parser.parse_args()
 
@@ -51,8 +57,9 @@ adj, features, labels, idx_train, idx_val, idx_test = load_data()
 
 loss = nn.BCELoss()
 
-for file in glob.glob(args.folder+'/*'):
-    model_name, lr, weight_decay, hidden, nb_heads, dropout, alpha = os.path.basename(file)[:-4].split('_')
+for file in glob.glob(args.folder + '/*'):
+    model_name, lr, weight_decay, hidden, nb_heads, dropout, alpha = os.path.basename(file)[
+        :-4].split('_')
     lr = float(lr)
     weight_decay = float(weight_decay)
     hidden = int(hidden)
