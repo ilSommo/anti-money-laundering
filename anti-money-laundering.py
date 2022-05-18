@@ -118,7 +118,7 @@ if args.model == 'GAT':
         alpha=args.alpha,
         nheads=args.nb_heads)
 
-if args.model == 'GAT_MLP':
+if args.model == 'GATMLP':
     model = GAT_MLP(
         nfeat=features.shape[1],
         nhid=args.hidden,
