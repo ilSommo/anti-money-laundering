@@ -1,4 +1,4 @@
-__version__ = '1.0.0-alpha'
+__version__ = '1.0.0-alpha.1'
 __author__ = 'Martino Pulici'
 
 
@@ -6,12 +6,12 @@ import torch
 
 
 def best_f1(y_score, labels):
-    y = zip(y_score.squeeze().data.tolist(),labels.data.tolist())
+    y = zip(y_score.squeeze().data.tolist(), labels.data.tolist())
     y = sorted(y, key=lambda tup: tup[0])
     f1_scores = []
     for elem in y:
         t = elem[0]
-        f1_scores.append(f1_score(y,t))
+        f1_scores.append(f1_score(y, t))
     return max(f1_scores)
 
 
