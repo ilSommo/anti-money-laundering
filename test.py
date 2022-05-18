@@ -11,6 +11,7 @@ import os
 import random
 
 import numpy as np
+import pandas as pd
 import torch
 from torch.autograd import Variable
 import torch.nn as nn
@@ -35,6 +36,7 @@ def test():
           'recall = {:.3f},'.format(rec_test),
           'f1-score = {:.3f},'.format(f1_test),
           'best f1 = {:.3f}'.format(best_f1_test))
+    return pd.concat([df,pd.DataFrame([{'model_name':model_name,'lr':lr, 'weight_decay':weight_decay, 'hidden':hidden, 'nb_heads':nb_heads, 'dropout':dropout, 'alpha':alpha, 'loss':loss_test.data.item(),'accuracy':acc_test,'precision':prec_test,'recall':rec_test,'f1-score':f1_test,'best f1': best_f1_test}])],ignore_index = True)
 
 
 parser = argparse.ArgumentParser()
@@ -57,7 +59,9 @@ adj, features, labels, idx_train, idx_val, idx_test = load_data()
 
 loss = nn.BCELoss()
 
-for file in glob.glob(args.folder + '/*'):
+df = pd.DataFrame()
+
+for file in sorted(glob.glob(args.folder + '/*')):
     model_name, lr, weight_decay, hidden, nb_heads, dropout, alpha = os.path.basename(file)[
         :-4].split('_')
     lr = float(lr)
@@ -106,4 +110,6 @@ for file in glob.glob(args.folder + '/*'):
 
     model.load_state_dict(torch.load(file))
 
-    test()
+    df = test()
+
+df.to_csv('checkpoints.csv', index=False)
