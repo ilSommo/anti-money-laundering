@@ -1,4 +1,4 @@
-__version__ = '1.0.0-alpha.1'
+__version__ = '1.0.0'
 __author__ = 'Martino Pulici'
 
 
@@ -162,7 +162,7 @@ for epoch in range(1, args.epochs + 1):
     for file in files:
         epoch_nb = int(file.split('.')[0])
         if epoch_nb != best_epoch:
-            open(file, 'w').close() 
+            open(file, 'w').close()
             os.remove(file)
 
 print('Optimization Finished!')
@@ -185,5 +185,5 @@ torch.save(model.state_dict(),
 # Remove suboptimal weight files
 files = glob.glob('*.pkl')
 for file in files:
-    open(file, 'w').close() 
+    open(file, 'w').close()
     os.remove(file)

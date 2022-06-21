@@ -1,4 +1,4 @@
-__version__ = '1.0.0-alpha.1'
+__version__ = '1.0.0'
 __author__ = 'Martino Pulici'
 
 
@@ -29,7 +29,9 @@ def test():
     loss_test = loss(output[idx_test], labels[idx_test].unsqueeze(1))
     acc_test, prec_test, rec_test, f1_test = evaluate(
         output[idx_test], labels[idx_test], threshold=threshold)
-    lr_auc = roc_auc_score(labels[idx_test].data.tolist(), output[idx_test].data.tolist())
+    lr_auc = roc_auc_score(
+        labels[idx_test].data.tolist(),
+        output[idx_test].data.tolist())
     print(file,
           'loss = {:.3f},'.format(loss_test.data.item()),
           'accuracy = {:.3f},'.format(acc_test),
@@ -37,9 +39,24 @@ def test():
           'recall = {:.3f},'.format(rec_test),
           'f1-score = {:.3f},'.format(f1_test),
           'ROC-AUC = {:.3f}'.format(lr_auc))
-    lr_fpr, lr_tpr, _ = roc_curve(labels[idx_test].data.tolist(), output[idx_test].data.tolist())
+    lr_fpr, lr_tpr, _ = roc_curve(
+        labels[idx_test].data.tolist(), output[idx_test].data.tolist())
     plt.plot(lr_fpr, lr_tpr, marker='.', label=model_name)
-    return pd.concat([df,pd.DataFrame([{'model_name':model_name,'lr':lr, 'weight_decay':weight_decay, 'hidden':hidden, 'nb_heads':nb_heads, 'dropout':dropout, 'alpha':alpha, 'loss':loss_test.data.item(),'accuracy':acc_test,'precision':prec_test,'recall':rec_test,'f1-score':f1_test,'ROC-AUC': lr_auc}])],ignore_index = True)
+    return pd.concat([df,
+                      pd.DataFrame([{'model_name': model_name,
+                                     'lr': lr,
+                                     'weight_decay': weight_decay,
+                                     'hidden': hidden,
+                                     'nb_heads': nb_heads,
+                                     'dropout': dropout,
+                                     'alpha': alpha,
+                                     'loss': loss_test.data.item(),
+                                     'accuracy': acc_test,
+                                     'precision': prec_test,
+                                     'recall': rec_test,
+                                     'f1-score': f1_test,
+                                     'ROC-AUC': lr_auc}])],
+                     ignore_index=True)
 
 
 # Parse arguments
@@ -120,7 +137,10 @@ for file in sorted(glob.glob(args.folder + '/*')):
     if torch.cuda.is_available():
         model.load_state_dict(torch.load(file))
     else:
-        model.load_state_dict(torch.load(file,map_location=torch.device('cpu')))
+        model.load_state_dict(
+            torch.load(
+                file,
+                map_location=torch.device('cpu')))
     df = test()
 
 # Save test results

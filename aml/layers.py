@@ -1,4 +1,4 @@
-__version__ = '1.0.0-alpha.1'
+__version__ = '1.0.0'
 __author__ = 'Martino Pulici'
 
 
@@ -76,7 +76,7 @@ class SpecialSpmmFunction(torch.autograd.Function):
         -------
         x : torch.Tensor
             Result of the multiplication.
-        
+
         """
         assert indices.requires_grad == False
         a = torch.sparse_coo_tensor(indices, values, shape)
@@ -102,7 +102,7 @@ class SpecialSpmmFunction(torch.autograd.Function):
             Backward propagation of the tensor values.
         grad_b : torch.Tensor
             Backward propagation of the second tensor.
-        
+
         """
         a, b = ctx.saved_tensors
         grad_values = grad_b = None
@@ -193,7 +193,7 @@ class SpGraphAttentionLayer(nn.Module):
         -------
         x : torch.Tensor
             Output tensor.
-        
+
         """
         dv = 'cuda' if x.is_cuda else 'cpu'
         N = x.size()[0]
@@ -214,7 +214,7 @@ class SpGraphAttentionLayer(nn.Module):
         if self.concat:
             x = F.elu(h_prime)
         else:
-            x = h_prime  
+            x = h_prime
         return x
 
     def __repr__(self):
@@ -224,7 +224,7 @@ class SpGraphAttentionLayer(nn.Module):
         -------
         x : str
             Class representation.
-        
+
         """
         x = self.__class__.__name__ + \
             ' (' + str(self.in_features) + ' -> ' + str(self.out_features) + ')'
