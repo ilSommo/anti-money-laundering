@@ -2,26 +2,65 @@ __version__ = '1.0.0-alpha.1'
 __author__ = 'Martino Pulici'
 
 
-import torch
+import numpy as np
 
 
 def best_f1(y_score, labels):
+    """Calculates the best f1-score.
+
+    Parameters
+    ----------
+    y_score : torch.FloatTensor
+        Predicted scores.
+    labels : torch.FloatTensor
+        Labels.
+
+    Returns
+    -------
+    max_f1 : float
+        Maximum f1-score.
+    max_index : int
+        Index of maximum f1-score.
+
+    """
     y = zip(y_score.squeeze().data.tolist(), labels.data.tolist())
     y = sorted(y, key=lambda tup: tup[0])
     f1_scores = []
     for elem in y:
         t = elem[0]
         f1_scores.append(f1_score(y, t))
-    return max(f1_scores)
+    max_f1 = max(f1_scores)
+    max_index = y[np.argmax(f1_scores)][0]
+    return max_f1, max_index
 
 
-def evaluate(output, labels, use_tensors=True):
+def evaluate(output, labels, threshold=0.5):
+    """Calculates evaluation metrics.
+
+    Parameters
+    ----------
+    output : torch.FloatTensor
+        Predicted scores.
+    labels : torch.FloatTensor
+        Labels.
+    threshold : float, default 0.5
+        Threshold for positives.       
+
+    Returns
+    -------
+    accuracy : float
+        Accuracy.
+    precision : float
+        Precision.
+    recall : float
+        Recall.
+    f1_score : float
+        f1-score.
+
+    """
     tp = tn = fp = fn = 0
     for i in range(len(labels)):
-        if use_tensors:
-            out = (torch.round(output[i]))
-        else:
-            out = (output[i])
+        out = (output[i]>=threshold).int()
         lab = (labels[i])
         if out == 1 and lab == 1:
             tp += 1
@@ -39,6 +78,21 @@ def evaluate(output, labels, use_tensors=True):
 
 
 def f1_score(y, t):
+    """Calculates f1-score.
+
+    Parameters
+    ----------
+    y : list
+        Zipped outputs and labels.
+    t : float
+        Threshold for positives.
+
+    Returns
+    -------
+    f1_score : float
+        f1-score.
+
+    """
     tp = tn = fp = fn = 0
     for i in range(len(y)):
         out = 1 if y[i][0] >= t else 0

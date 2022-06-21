@@ -11,26 +11,53 @@ import torch
 
 
 def check(name, unique):
-    if(name in unique):
-        return name
-    else:
-        return -1
+    """Checks for name uniqueness.
 
+    Parameters
+    ----------
+    name : str
+        Name to check.
+    unique : numpy.ndarray
+        Array of unique names.
 
-def encode_onehot(labels):
-    classes = sorted(list(set(labels)))
-    classes_dict = {
-        c: np.identity(
-            len(classes))[
-            i,
-            :] for i,
-        c in enumerate(classes)}
-    labels_onehot = np.array(
-        list(map(classes_dict.get, labels)), dtype=np.float64)
-    return labels_onehot
+    Returns
+    -------
+    x
+        Name.
+
+    """
+    if(name not in unique):
+        name = -1
+    return name
+
 
 
 def load_data(data_dir='./data/elliptic_bitcoin_dataset/', random_state=28):
+    """Loads data.
+
+    Parameters
+    ----------
+    data_dir : str, default './data/elliptic_bitcoin_dataset/'
+        Directory of data.
+    random_state : int, default 28
+        Random state seed.
+
+    Returns
+    -------
+    adj : torch.FloatTensor
+        Adjacent matrix.
+    features : torch.FloatTensor
+        Features matrix.
+    labels : torch.FloatTensor
+        Labels matrix.
+    idx_train : torch.LongTensor
+        Training set indexes.
+    idx_val : torch.LongTensor
+        Validation set indexes.
+    idx_test : torch.LongTensor
+        Test set indexes.
+
+    """
     edges = pd.read_csv(data_dir + 'elliptic_txs_edgelist.csv')
     features = pd.read_csv(data_dir + 'elliptic_txs_features.csv', header=None)
     classes = pd.read_csv(data_dir + 'elliptic_txs_classes.csv')
@@ -108,14 +135,41 @@ def load_data(data_dir='./data/elliptic_bitcoin_dataset/', random_state=28):
 
 
 def normalize_adj(mx):
+    """Normalizes adjacent matrix.
+
+    Parameters
+    ----------
+    mx : torch.FloatTensor
+        Adjacent matrix.
+
+    Returns
+    -------
+    mx : torch.FloatTensor
+        Adjacent matrix.
+
+    """
     rowsum = np.array(mx.sum(1))
     r_inv_sqrt = np.power(rowsum, -0.5).flatten()
     r_inv_sqrt[np.isinf(r_inv_sqrt)] = 0.
     r_mat_inv_sqrt = sp.diags(r_inv_sqrt)
-    return mx.dot(r_mat_inv_sqrt).transpose().dot(r_mat_inv_sqrt)
+    mx = mx.dot(r_mat_inv_sqrt).transpose().dot(r_mat_inv_sqrt)
+    return mx
 
 
 def normalize_features(mx):
+    """Normalizes features matrix.
+
+    Parameters
+    ----------
+    mx : torch.FloatTensor
+        Features matrix.
+
+    Returns
+    -------
+    mx : torch.FloatTensor
+        Features matrix.
+
+    """
     rowsum = np.array(mx.sum(1))
     r_inv = np.power(rowsum, -1).flatten()
     r_inv[np.isinf(r_inv)] = 0.
