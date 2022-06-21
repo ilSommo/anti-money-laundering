@@ -1,7 +1,7 @@
 from __future__ import division
 from __future__ import print_function
 
-__version__ = '1.0.0-alpha.1'
+__version__ = '1.0.0'
 __author__ = 'Martino Pulici'
 
 
@@ -38,7 +38,22 @@ def eval():
           'f1-score = {:.3f},'.format(f1_val),
           'best f1 = {:.3f}'.format(best_f1_val),
           'threshold = {:.3f}'.format(best_f1_threshold))
-    return pd.concat([df,pd.DataFrame([{'model_name':model_name,'lr':lr, 'weight_decay':weight_decay, 'hidden':hidden, 'nb_heads':nb_heads, 'dropout':dropout, 'alpha':alpha, 'loss':loss_val.data.item(),'accuracy':acc_val,'precision':prec_val,'recall':rec_val,'f1-score':f1_val,'best f1': best_f1_val,'threshold':best_f1_threshold}])],ignore_index = True)
+    return pd.concat([df,
+                      pd.DataFrame([{'model_name': model_name,
+                                     'lr': lr,
+                                     'weight_decay': weight_decay,
+                                     'hidden': hidden,
+                                     'nb_heads': nb_heads,
+                                     'dropout': dropout,
+                                     'alpha': alpha,
+                                     'loss': loss_val.data.item(),
+                                     'accuracy': acc_val,
+                                     'precision': prec_val,
+                                     'recall': rec_val,
+                                     'f1-score': f1_val,
+                                     'best f1': best_f1_val,
+                                     'threshold': best_f1_threshold}])],
+                     ignore_index=True)
 
 
 # Parse arguments
@@ -119,7 +134,10 @@ for file in sorted(glob.glob(args.folder + '/*')):
     if torch.cuda.is_available():
         model.load_state_dict(torch.load(file))
     else:
-        model.load_state_dict(torch.load(file,map_location=torch.device('cpu')))
+        model.load_state_dict(
+            torch.load(
+                file,
+                map_location=torch.device('cpu')))
     df = eval()
 
 # Save evaluation results

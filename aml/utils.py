@@ -1,4 +1,4 @@
-__version__ = '1.0.0-alpha.1'
+__version__ = '1.0.0'
 __author__ = 'Martino Pulici'
 
 
@@ -44,7 +44,7 @@ def evaluate(output, labels, threshold=0.5):
     labels : torch.FloatTensor
         Labels.
     threshold : float, default 0.5
-        Threshold for positives.       
+        Threshold for positives.
 
     Returns
     -------
@@ -60,7 +60,7 @@ def evaluate(output, labels, threshold=0.5):
     """
     tp = tn = fp = fn = 0
     for i in range(len(labels)):
-        out = (output[i]>=threshold).int()
+        out = (output[i] >= threshold).int()
         lab = (labels[i])
         if out == 1 and lab == 1:
             tp += 1

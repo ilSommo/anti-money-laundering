@@ -1,4 +1,4 @@
-__version__ = '1.0.0-alpha.1'
+__version__ = '1.0.0'
 __author__ = 'Martino Pulici'
 
 
@@ -29,7 +29,6 @@ def check(name, unique):
     if(name not in unique):
         name = -1
     return name
-
 
 
 def load_data(data_dir='./data/elliptic_bitcoin_dataset/', random_state=28):

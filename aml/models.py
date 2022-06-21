@@ -1,4 +1,4 @@
-__version__ = '1.0.0-alpha.1'
+__version__ = '1.0.0'
 __author__ = 'Martino Pulici'
 
 
@@ -76,7 +76,7 @@ class GAT(nn.Module):
         -------
         x : torch.Tensor
             Output tensor.
-        
+
         """
         x = F.dropout(x, self.dropout, training=self.training)
         x = torch.cat([att(x, adj) for att in self.attentions], dim=1)
@@ -161,7 +161,7 @@ class GAT_MLP(nn.Module):
         -------
         x : torch.Tensor
             Output tensor.
-        
+
         """
         batch_size = x.shape[0]
         x = F.dropout(x, self.dropout, training=self.training)
@@ -173,6 +173,7 @@ class GAT_MLP(nn.Module):
         x = self.output_fc(x)
         x = torch.sigmoid(x)
         return x
+
 
 class MLP(nn.Module):
     """ Multi Layer Perceptron.
@@ -227,7 +228,7 @@ class MLP(nn.Module):
         -------
         x : torch.Tensor
             Output tensor.
-        
+
         """
         batch_size = x.shape[0]
         x = x.view(batch_size, -1)
@@ -265,6 +266,7 @@ class MLP_GAT_MLP(nn.Module):
         Runs the module.
 
     """
+
     def __init__(self, nfeat, nhid, dropout, alpha, nheads):
         """
         Initializes the class.
@@ -287,7 +289,7 @@ class MLP_GAT_MLP(nn.Module):
         self.dropout = dropout
         self.attentions = [
             SpGraphAttentionLayer(
-                nfeat*10,
+                nfeat * 10,
                 nhid,
                 dropout=dropout,
                 alpha=alpha,
@@ -295,7 +297,11 @@ class MLP_GAT_MLP(nn.Module):
         for i, attention in enumerate(self.attentions):
             self.add_module('attention_{}'.format(i), attention)
         self.out_att = SpGraphAttentionLayer(
-            nhid * nheads, nfeat*10, dropout=dropout, alpha=alpha, concat=False)
+            nhid * nheads,
+            nfeat * 10,
+            dropout=dropout,
+            alpha=alpha,
+            concat=False)
         self.input_fc = nn.Linear(nfeat, nfeat * 10)
         self.hidden_fc = nn.Linear(nfeat * 10, 10)
         self.output_fc = nn.Linear(10, 1)
@@ -314,7 +320,7 @@ class MLP_GAT_MLP(nn.Module):
         -------
         x : torch.Tensor
             Output tensor.
-        
+
         """
         batch_size = x.shape[0]
         x = F.dropout(x, self.dropout, training=self.training)
@@ -376,7 +382,7 @@ class SLP(nn.Module):
         -------
         x : torch.Tensor
             Output tensor.
-        
+
         """
         batch_size = x.shape[0]
         x = x.view(batch_size, -1)
