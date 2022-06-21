@@ -9,6 +9,7 @@ import random
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from sklearn.metrics import roc_curve, roc_auc_score
 import torch
 from torch.autograd import Variable
@@ -38,6 +39,7 @@ def test():
           'ROC-AUC = {:.3f}'.format(lr_auc))
     lr_fpr, lr_tpr, _ = roc_curve(labels[idx_test].data.tolist(), output[idx_test].data.tolist())
     plt.plot(lr_fpr, lr_tpr, marker='.', label=model_name)
+    return pd.concat([df,pd.DataFrame([{'model_name':model_name,'lr':lr, 'weight_decay':weight_decay, 'hidden':hidden, 'nb_heads':nb_heads, 'dropout':dropout, 'alpha':alpha, 'loss':loss_test.data.item(),'accuracy':acc_test,'precision':prec_test,'recall':rec_test,'f1-score':f1_test,'ROC-AUC': lr_auc}])],ignore_index = True)
 
 
 # Parse arguments
@@ -63,6 +65,9 @@ adj, features, labels, idx_train, idx_val, idx_test = load_data()
 
 # Initialize loss
 loss = nn.BCELoss()
+
+# Initialize dataframe
+df = pd.DataFrame()
 
 # Perform testing loop
 for file in sorted(glob.glob(args.folder + '/*')):
@@ -116,7 +121,10 @@ for file in sorted(glob.glob(args.folder + '/*')):
         model.load_state_dict(torch.load(file))
     else:
         model.load_state_dict(torch.load(file,map_location=torch.device('cpu')))
-    test()
+    df = test()
+
+# Save test results
+df.to_csv('test.csv', index=False)
 
 # Plot ROC curves
 ns_probs = [0 for _ in range(len(labels[idx_test].data.tolist()))]
@@ -125,4 +133,4 @@ plt.plot(ns_fpr, ns_tpr, linestyle='--', label='Random')
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.legend()
-plt.show()
+plt.savefig('test.png')
